@@ -1,0 +1,4 @@
+1 AMD   requirejs
+2 browserify 以浏览器中使用Nodejs模块为出发工具
+2’1 对CommonJS规范的模块代码进行的转换与包装
+2‘2 只要是遵循CommonJS规范的Javascript模块,即使是纯前端代码,也可以使用它进行打包
