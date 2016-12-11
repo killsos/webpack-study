@@ -1,0 +1,185 @@
+Webpack 是当下最热门的前端资源模块化管理和打包工具。
+它可以将许多松散的模块按照依赖和规则打包成符合生产环境部署的前端资源。
+还可以将按需加载的模块进行代码分隔，等到实际需要的时候再异步加载。通过 loader 的转换，
+任何形式的资源都可以视作模块，
+比如 CommonJs 模块、 AMD 模块、 ES6 模块、CSS、图片、 JSON、Coffeescript、 LESS 等。
+
+
+CommonJS 是以在浏览器环境之外构建 JavaScript 生态系统为目标而产生的项目，比如在服务器和桌面环境中。
+这个项目最开始是由 Mozilla 的工程师 Kevin Dangoor 在2009年1月创建的，当时的名字是 ServerJS。
+
+2009年8月，这个项目改名为 CommonJS，以显示其 API 的更广泛实用性。
+CommonJS 是一套规范，它的创建和核准是开放的。这个规范已经有很多版本和具体实现。
+CommonJS 并不是属于 ECMAScript TC39 小组的工作，但 TC39 中的一些成员参与 CommonJS 的制定。
+2013年5月，Node.js 的包管理器 NPM 的作者 Isaac Z. Schlueter 说 CommonJS 已经过时，
+Node.js 的内核开发者已经废弃了该规范。
+
+CommonJS 规范是为了解决 JavaScript 的作用域问题而定义的模块形式，可以使每个模块它自身的命名空间中执行。
+该规范的主要内容是，模块必须通过 module.exports 导出对外的变量或接口，
+通过 require() 来导入其他模块的输出到当前模块作用域中。
+
+
+// moduleA.js
+module.exports = function( value ){
+    return value * 2;
+}
+// moduleB.js
+var multiplyBy2 = require('./moduleA');
+var result = multiplyBy2(4)
+
+
+CommonJS 是同步加载模块，但其实也有浏览器端的实现，
+其原理是现将所有模块都定义好并通过 id 索引，这样就可以方便的在浏览器环境中解析了
+--------------------------------------------------------------------------------
+CommonJS
+优点：
+服务器端模块便于重用
+NPM 中已经有将近20万个可以使用模块包
+简单并容易使用
+
+缺点：
+同步的模块加载方式不适合在浏览器环境中，同步意味着阻塞加载，浏览器资源是异步加载的
+不能非阻塞的并行加载多个模块
+
+
+AMD
+define("module", ["dep1", "dep2"], function(d1, d2) {
+  return someExportedValue;
+});
+require(["module", "../file"], function(module, file) { /* ... */ });
+
+优点：
+适合在浏览器环境中异步加载模块
+可以并行加载多个模块
+
+缺点：
+提高了开发成本，代码的阅读和书写比较困难，模块定义方式的语义不顺畅
+不符合通用的模块化思维方式，是一种妥协的实现
+
+实现：
+RequireJS
+curl
+
+CMD
+Common Module Definition 规范和 AMD 很相似，尽量保持简单，
+并与 CommonJS 和 Node.js 的 Modules 规范保持了很大的兼容性
+
+define(function(require, exports, module) {
+  var $ = require('jquery');
+  var Spinning = require('./spinning');
+  exports.doSomething = ...
+  module.exports = ...
+})
+优点：
+依赖就近，延迟执行
+可以很容易在 Node.js 中运行
+
+缺点：
+依赖 SPM 打包，模块的加载逻辑偏重
+
+实现：
+Sea.js
+coolie
+
+UMD
+Universal Module Definition 规范类似于兼容 CommonJS 和 AMD 的语法糖，
+是模块定义的跨平台解决方案。
+
+ES6 模块
+
+EcmaScript6 标准增加了 JavaScript 语言层面的模块体系定义。
+ES6 模块的设计思想，是尽量的静态化，使得编译时就能确定模块的依赖关系，
+以及输入和输出的变量。CommonJS 和 AMD 模块，都只能在运行时确定这些东西。
+优点：
+容易进行静态分析
+面向未来的 EcmaScript 标准
+
+缺点：
+原生浏览器端还没有实现该标准
+全新的命令字，新版的 Node.js才支持
+
+实现：
+Babel
+
+静态分析
+
+在编译的时候，要对整个代码进行静态分析，分析出各个模块的类型和它们依赖关系，
+然后将不同类型的模块提交给适配的加载器来处理。比如一个用 LESS 写的样式模块，
+可以先用 LESS 加载器将它转成一个CSS 模块，在通过 CSS 模块把他插入到页面的 <style> 标签中执行。
+Webpack 就是在这样的需求中应运而生。
+
+
+Webpack 是一个模块打包器。它将根据模块的依赖关系进行静态分析，然后将这些模块按照指定的规则生成对应的静态资源。
+
+Webpack 的特点
+1 代码拆分
+2 Loader
+    Webpack 本身只能处理原生的 JavaScript 模块，但是 loader 转换器可以将各种类型的资源转换成 JavaScript 模块。
+  这样，任何资源都可以成为 Webpack 可以处理的模块。
+3 智能解析
+  Webpack 有一个智能解析器，几乎可以处理任何第三方库，无论它们的模块形式是 CommonJS、 AMD 还是普通的 JS 文件。
+  甚至在加载依赖的时候，允许使用动态表达式 require("./templates/" + name + ".jade")。
+4 插件系统
+5 快速运行
+  Webpack 使用异步 I/O 和多级缓存提高运行效率，这使得 Webpack 能够以令人难以置信的速度快速增量编译。
+--------------------------------------------------------------------------------
+AMD 规范
+
+AMD（异步模块定义）是为浏览器环境设计的，因为 CommonJS 模块系统是同步加载的，
+当前浏览器环境还没有准备好同步加载模块的条件。
+
+AMD 定义了一套 JavaScript 模块依赖异步加载标准，来解决同步加载的问题。
+
+模块通过 define 函数定义在闭包中，格式如下：
+
+define(id?: String, dependencies?: String[], factory: Function|Object);
+id 是模块的名字，它是可选的参数。
+
+dependencies 指定了所要依赖的模块列表，它是一个数组，也是可选的参数，
+每个依赖的模块的输出将作为参数一次传入 factory 中。如果没有指定 dependencies，
+那么它的默认值是 ["require", "exports", "module"]。
+
+define(function(require, exports, module) {}）
+factory 是最后一个参数，它包裹了模块的具体实现，它是一个函数或者对象。如果是函数，那么它的返回值就是模块的输出接口或值。
+
+一些用例：
+
+定义一个名为 myModule 的模块，它依赖 jQuery 模块：
+
+define('myModule', ['jquery'], function($) {
+    // $ 是 jquery 模块的输出
+    $('body').text('hello world');
+});
+// 使用
+define(['myModule'], function(myModule) {});
+注意：在 webpack 中，模块名只有局部作用域，在 Require.js 中模块名是全局作用域，可以在全局引用。
+
+定义一个没有 id 值的匿名模块，通常作为应用的启动函数：
+
+define(['jquery'], function($) {
+    $('body').text('hello world');
+});
+依赖多个模块的定义：
+
+define(['jquery', './math.js'], function($, math) {
+    // $ 和 math 一次传入 factory
+    $('body').text('hello world');
+    });
+模块输出：
+
+define(['jquery'], function($) {
+
+    var HelloWorldize = function(selector){
+        $(selector).text('hello world');
+    };
+
+    // HelloWorldize 是该模块输出的对外接口
+    return HelloWorldize;
+});
+在模块定义内部引用依赖：
+
+define(function(require) {
+    var $ = require('jquery');
+    $('body').text('hello world');
+});
+--------------------------------------------------------------------------------
