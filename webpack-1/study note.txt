@@ -183,3 +183,13 @@ define(function(require) {
     $('body').text('hello world');
 });
 --------------------------------------------------------------------------------
+
+//进入项目目录
+//确定已有package.json，没有就npm init 创建
+$ npm install webpack --save-dev
+
+//查看webpack 版本信息
+$ npm info webpack
+
+//安装指定版本
+$ npm install webpack@1.31.x --save-dev
